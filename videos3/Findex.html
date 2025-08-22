@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria de Vídeos com Autoplay</title>
+    <style>
+        :root {
+            --radius-2xl: 1.5rem;
+            --primary-bg: #050a1a;
+            --subtle-border: rgba(255, 255, 255, 0.08);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .media {
+            position: relative;
+            /* Removido aspect-ratio para tamanho automático */
+            background: var(--primary-bg);
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            border: 1px solid var(--subtle-border);
+            width: 100%;
+            /* Novo: transição suave para hover */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .media:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2);
+        }
+        
+        .media video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: var(--radius-2xl);
+            }
+
+        .media {
+            position: relative;
+            background: var(--primary-bg);
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            border: 1px solid var(--subtle-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            height: 0;
+            padding-bottom: 56.25%; /* Proporção 16:9 */
+        }
+        
+        .media:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2);
+        }
+        
+        .media video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--radius-2xl);
+        }
+        
+        .media.active {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5);
+        }
+        
+        .media .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 1.5rem 1rem 1rem;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .media.active .overlay {
+            opacity: 0;
+        }
+        
+        .media .title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .media .duration {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+        
+        .instructions {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: var(--radius-2xl);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid var(--subtle-border);
+        }
+        
+        .instructions h2 {
+            margin-bottom: 1rem;
+            color: #818cf8;
+        }
+        
+        .instructions ul {
+            padding-left: 1.5rem;
+        }
+        
+        .instructions li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        
+        .code-explanation {
+            background: #0f172a;
+            padding: 1.5rem;
+            border-radius: var(--radius-2xl);
+            margin-top: 2rem;
+            overflow-x: auto;
+        }
+        
+        .code-explanation h2 {
+            margin-bottom: 1rem;
+            color: #818cf8;
+        }
+        
+        pre {
+            color: #e2e8f0;
+            white-space: pre-wrap;
+        }
+        
+        .comment { color: #94a3b8; }
+        .selector { color: #f87171; }
+        .property { color: #60a5fa; }
+        .value { color: #34d399; }
+        
+        @media (max-width: 768px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Galeria de Vídeos com Autoplay</h1>
+            <p class="subtitle">Os vídeos começam a reproduzir automaticamente quando estão visíveis na tela. Clique em um vídeo para dar foco.</p>
+        </header>
+        
+        <div class="video-grid">
+            <div class="media active">
+                <video loop muted autoplay>
+                    <source src="videos/Ribeiro1.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">Texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+             <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro2.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+             <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro3.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+
+             <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro4.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+             <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro5.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+             <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro6.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+
+             <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro7.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+
+
+
+             <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro8.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+
+             <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro9.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+
+             <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro3.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+            
+            <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro3.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+            
+            <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro2.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">Texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+            
+            <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro1.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">Texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+            
+            <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro5.mp4"type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">Texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+            
+            <div class="media">
+                <video loop muted>
+                    <source src="videos/Ribeiro6.mp4" type="video/mp4">
+                </video>
+                <div class="overlay">
+                    <div class="title">Texto</div>
+                    <div class="duration">0:00</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>Como funciona a reprodução automática</h2>
+            <ul>
+                <li>Os vídeos são configurados com <code>muted</code> e <code>loop</code> para permitir autoplay</li>
+                <li>O JavaScript detecta quando os vídeos estão visíveis na tela</li>
+                <li>Quando um vídeo fica visível, ele começa a reproduzir automaticamente</li>
+                <li>Quando não está mais visível, a reprodução é pausada</li>
+                <li>Clique em qualquer vídeo para dar foco e reproduzir com áudio</li>
+            </ul>
+        </div>
+        
+        <div class="code-explanation">
+            <h2>Código para reprodução automática</h2>
+            <pre><code><span class="comment">// Configuração básica do vídeo para autoplay</span>
+<span class="selector">&lt;video</span> <span class="property">loop</span> <span class="property">muted</span> <span class="property">autoplay</span><span class="selector">&gt;</span>
+    <span class="selector">&lt;source</span> <span class="property">src</span>=<span class="value">"video.mp4"</span> <span class="property">type</span>=<span class="value">"video/mp4"</span><span class="selector">&gt;</span>
+<span class="selector">&lt;/video&gt;</span>
+
+<span class="comment">// JavaScript para detectar visibilidade</span>
+<span class="selector">const</span> observer = <span class="selector">new</span> IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        <span class="selector">const</span> video = entry.target.querySelector(<span class="value">'video'</span>);
+        <span class="selector">if</span> (entry.isIntersecting) {
+            video.play();
+        } <span class="selector">else</span> {
+            video.pause();
+        }
+    });
+}, { threshold: 0.5 });
+
+<span class="comment">// Observar todos os elementos de mídia</span>
+document.querySelectorAll(<span class="value">'.media'</span>).forEach(media => {
+    observer.observe(media);
+});</code></pre>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar o Intersection Observer para detectar vídeos visíveis
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target.querySelector('video');
+                    if (entry.isIntersecting) {
+                        video.play();
+                    } else {
+                        video.pause();
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            // Observar todos os elementos de mídia
+            document.querySelectorAll('.media').forEach(media => {
+                observer.observe(media);
+            });
+            
+            // Clique para focar em um vídeo e ativar o áudio
+            document.querySelectorAll('.media').forEach(media => {
+                media.addEventListener('click', function() {
+                    // Remover a classe active de todos os vídeos
+                    document.querySelectorAll('.media').forEach(m => {
+                        m.classList.remove('active');
+                        const v = m.querySelector('video');
+                        v.muted = true;
+                    });
+                    
+                    // Adicionar a classe active ao vídeo clicado
+                    this.classList.add('active');
+                    const video = this.querySelector('video');
+                    video.muted = false;
+                    video.play();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
